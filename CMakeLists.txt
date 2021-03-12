@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
 project(argon2 LANGUAGES C)
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
-
 option(${BUILD_SHARED_LIBS} "Build libraries as shared libraries" ON)
 option(USE_THREADS "Enables use of parallelism" ON)
 
@@ -26,16 +23,16 @@ if(MSVC)
     if(ARCH EQUAL "native")
         set(TARCH "AVX512")
     endif()
-    try_compile(OPTTEST ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/src/opt.c" 
+    try_compile(OPTTEST ${PROJECT_BINARY_DIR} "${PROJECT_SOURCE_DIR}/src/opt.c" 
         CMAKE_FLAGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} /arch:${TARCH}"
-        "-DINCLUDE_DIRECTORIES=${CMAKE_SOURCE_DIR}/src;${CMAKE_SOURCE_DIR}/include"
+        "-DINCLUDE_DIRECTORIES=${PROJECT_SOURCE_DIR}/src;${PROJECT_SOURCE_DIR}/include"
         C_STANDARD 90 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF
     )
     if(NOT OPTTEST AND ARCH EQUAL "native")
         set(ARCH "AVX2")
-        try_compile(OPTTEST ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/src/opt.c" 
+        try_compile(OPTTEST ${PROJECT_BINARY_DIR} "${PROJECT_SOURCE_DIR}/src/opt.c" 
             CMAKE_FLAGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} /arch:${ARCH}"
-            "-DINCLUDE_DIRECTORIES=${CMAKE_SOURCE_DIR}/src;${CMAKE_SOURCE_DIR}/include"
+            "-DINCLUDE_DIRECTORIES=${PROJECT_SOURCE_DIR}/src;${PROJECT_SOURCE_DIR}/include"
             C_STANDARD 90 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF
         )
         if(NOT OPTTEST)
@@ -57,9 +54,9 @@ if(MSVC)
 else()
     set(ARCH "native" CACHE STRING "Architecture to tell compiler to optimize for (-march)")
 
-    try_compile(OPTTEST ${CMAKE_BINARY_DIR} "${CMAKE_SOURCE_DIR}/src/opt.c" 
+    try_compile(OPTTEST ${PROJECT_BINARY_DIR} "${PROJECT_SOURCE_DIR}/src/opt.c" 
         CMAKE_FLAGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -march=${ARCH}"
-        "-DINCLUDE_DIRECTORIES=${CMAKE_SOURCE_DIR}/src;${CMAKE_SOURCE_DIR}/include"
+        "-DINCLUDE_DIRECTORIES=${PROJECT_SOURCE_DIR}/src;${PROJECT_SOURCE_DIR}/include"
         C_STANDARD 90 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF
     )
     if(NOT OPTTEST)
