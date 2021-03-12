@@ -6,7 +6,8 @@
 
 This is the reference C implementation of Argon2, the password-hashing
 function that won the [Password Hashing Competition
-(PHC)](https://password-hashing.net).
+(PHC)](https://password-hashing.net). This is also modified for use with 
+CMake's Fetch Content
 
 Argon2 is a password-hashing function that summarizes the state of the
 art in the design of memory-hard functions and can be used to hash
@@ -43,49 +44,8 @@ Please report bugs as issues on this repository.
 
 ## Usage
 
-`make` builds the executable `argon2`, the static library `libargon2.a`,
-and the shared library `libargon2.so` (or on macOS, the dynamic library
-`libargon2.dylib` -- make sure to specify the installation prefix when
-you compile: `make PREFIX=/usr`). Make sure to run `make test` to verify
-that your build produces valid results. `sudo make install PREFIX=/usr`
-installs it to your system.
-
-### Command-line utility
-
-`argon2` is a command-line utility to test specific Argon2 instances
-on your system. To show usage instructions, run
-`./argon2 -h` as
-```
-Usage:  ./argon2 [-h] salt [-i|-d|-id] [-t iterations] [-m memory] [-p parallelism] [-l hash length] [-e|-r] [-v (10|13)]
-        Password is read from stdin
-Parameters:
-        salt            The salt to use, at least 8 characters
-        -i              Use Argon2i (this is the default)
-        -d              Use Argon2d instead of Argon2i
-        -id             Use Argon2id instead of Argon2i
-        -t N            Sets the number of iterations to N (default = 3)
-        -m N            Sets the memory usage of 2^N KiB (default 12)
-        -p N            Sets parallelism to N threads (default 1)
-        -l N            Sets hash output length to N bytes (default 32)
-        -e              Output only encoded hash
-        -r              Output only the raw bytes of the hash
-        -v (10|13)      Argon2 version (defaults to the most recent version, currently 13)
-        -h              Print argon2 usage
-```
-For example, to hash "password" using "somesalt" as a salt and doing 2
-iterations, consuming 64 MiB, using four parallel threads and an output hash
-of 24 bytes
-```
-$ echo -n "password" | ./argon2 somesalt -t 2 -m 16 -p 4 -l 24
-Type:           Argon2i
-Iterations:     2
-Memory:         65536 KiB
-Parallelism:    4
-Hash:           45d7ac72e76f242b20b77b9bf9bf9d5915894e669a24e6c6
-Encoded:        $argon2i$v=19$m=65536,t=2,p=4$c29tZXNhbHQ$RdescudvJCsgt3ub+b+dWRWJTmaaJObG
-0.188 seconds
-Verification ok
-```
+`cmake` builds the static library `libargon2.a`.
+Tests are currently not implemented.
 
 ### Library
 
@@ -207,39 +167,6 @@ See [`include/argon2.h`](include/argon2.h) for API details.
 *Note: in this example the salt is set to the all-`0x00` string for the
 sake of simplicity, but in your application you should use a random salt.*
 
-
-### Benchmarks
-
-`make bench` creates the executable `bench`, which measures the execution
-time of various Argon2 instances:
-
-```
-$ ./bench
-Argon2d 1 iterations  1 MiB 1 threads:  5.91 cpb 5.91 Mcycles
-Argon2i 1 iterations  1 MiB 1 threads:  4.64 cpb 4.64 Mcycles
-0.0041 seconds
-
-Argon2d 1 iterations  1 MiB 2 threads:  2.76 cpb 2.76 Mcycles
-Argon2i 1 iterations  1 MiB 2 threads:  2.87 cpb 2.87 Mcycles
-0.0038 seconds
-
-Argon2d 1 iterations  1 MiB 4 threads:  3.25 cpb 3.25 Mcycles
-Argon2i 1 iterations  1 MiB 4 threads:  3.57 cpb 3.57 Mcycles
-0.0048 seconds
-
-(...)
-
-Argon2d 1 iterations  4096 MiB 2 threads:  2.15 cpb 8788.08 Mcycles
-Argon2i 1 iterations  4096 MiB 2 threads:  2.15 cpb 8821.59 Mcycles
-13.0112 seconds
-
-Argon2d 1 iterations  4096 MiB 4 threads:  1.79 cpb 7343.72 Mcycles
-Argon2i 1 iterations  4096 MiB 4 threads:  2.72 cpb 11124.86 Mcycles
-19.3974 seconds
-
-(...)
-```
-
 ## Bindings
 
 Bindings are available for the following languages (make sure to read
@@ -274,14 +201,6 @@ their documentation):
 * [Swift](https://github.com/ImKcat/CatCrypto) by [@ImKcat](https://github.com/ImKcat)
 * [Swift](https://github.com/tmthecoder/Argon2Swift) by [@tmthecoder](https://github.com/tmthecoder)
 
-
-## Test suite
-
-There are two sets of test suites. One is a low level test for the hash
-function, the other tests the higher level API. Both of these are built and
-executed by running:
-
-`make test`
 
 ## Intellectual property
 
